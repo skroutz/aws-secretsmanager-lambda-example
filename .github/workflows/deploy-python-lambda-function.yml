@@ -1,0 +1,54 @@
+name: Deploy to Python Lambda Function
+on:
+  push:
+    branches:
+      - "main"
+      - "master"
+    paths:
+      - 'py-function/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-central-1
+  LAMBDA_FUNCTION_NAME: 'secretsmanager-lambda-example-py-lambda-function'
+  LAMBDA_SECRETS_LAYER: 'secretsmanager-lambda-example-secrets-layer'
+  SECRETSMANAGER_PATH: 'secretsmanager-lambda-example/secret1'
+  ASSUME_ROLE: 'SkroutzSecretExampleLambdaDeployerRole'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-lambda-function:
+    name: Deploy Lambda Function
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: 'Checkout Source Code'
+        uses: actions/checkout@v1
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ env.ASSUME_ROLE }}
+          role-duration-seconds: 900
+      
+      - name: Zip Function Artifacts
+        env:
+          release_id: ${{ format('aws-secretsmanager-lambda-example-{0}-function.zip', github.head_ref )}}
+        run: |
+          mkdir build
+          cd ./py-function
+          zip -r ../build/$release_id ./*
+          cd ..
+
+      - name: Publish Zip as Lambda Layer
+        env:
+          release_id: ${{ format('aws-secretsmanager-lambda-example-{0}-function.zip', github.head_ref )}}
+        run: |
+          aws lambda update-function-code --function-name "${LAMBDA_FUNCTION_NAME}" --zip-file fileb://build/$release_id
+          rm -r ./build
