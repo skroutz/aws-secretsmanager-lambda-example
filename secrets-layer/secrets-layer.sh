@@ -49,10 +49,10 @@ if [[ ${last_cmd} -ne 0 ]]; then
 fi
 
 # Get the secret value by calling the Go executable
-SECRETS=$(yq e -o=json ./secrets.yaml | jq '.secrets' | jq -c '.[]')
+SECRETS=$(/opt/secrets-layer/yq e -o=json $LAMBDA_TASK_ROOT/secrets.yaml | /opt/secrets-layer/jq '.secrets' | /opt/secrets-layer/jq -c '.[]')
 echo "${SECRETS}"
 for s in $SECRETS;do
-    secretArn=$(echo $s | jq -r -c .valueFrom)
+    secretArn=$(echo $s | /opt/secrets-layer/jq -r -c .valueFrom)
     echo "Secret ARN: ${secretArn}"
     keyval=$(${fullPath}/get-secret -r "${region}" -s ${secretArn})
     # Verify that the last command was successful
