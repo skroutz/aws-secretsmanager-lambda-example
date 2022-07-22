@@ -11,12 +11,13 @@ locals {
     "ManagedBy" : "Terraform"
   }
 
-  py-lambda-function-name  = "${local.project-name}-py-lambda-function"
-  rb-lambda-function-name  = "${local.project-name}-rb-lambda-function"
-  lambda-layer-name     = "${local.project-name}-secrets-layer"
-  lambda-layer-arn     = "arn:aws:lambda:eu-central-1:533973265978:layer:secretsmanager-lambda-example-secrets-layer"
+  py-lambda-function-name = "${local.project-name}-py-lambda-function"
+  rb-lambda-function-name = "${local.project-name}-rb-lambda-function"
+  lambda-container-name = "${local.project-name}-lambda-container"
+  lambda-layer-name = "${local.project-name}-secrets-layer"
+  lambda-layer-arn = "arn:aws:lambda:eu-central-1:533973265978:layer:secretsmanager-lambda-example-secrets-layer"
+  ecr-name = "${local.project-name}-ecr"
   secret-path = local.project-name
-  secret-name  = "${local.project-name}/secret1"
 
   iam-deployer-user    = "${local.iam-resource-prefix}DeployerUser"
   iam-deployer-role    = "${local.iam-resource-prefix}DeployerRole"
