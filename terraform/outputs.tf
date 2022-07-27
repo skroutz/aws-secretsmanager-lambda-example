@@ -4,7 +4,7 @@ output "github-python-workflow-env" {
   value = {
     "AWS_REGION" : data.aws_region.current.name,
     "LAMBDA_FUNCTION_NAME" : module.lambda_py_function.lambda_function_name,
-    "LAMBDA_SECRETS_LAYER" : local.lambda-layer-name
+    "LAMBDA_SECRETS_LAYER" : local.lambda-layer-name,
     # "SECRETSMANAGER_PATH" : aws_secretsmanager_secret.app-secret.name,
     "ASSUME_ROLE" : module.deployer_role.iam_role_name,
   }
@@ -16,7 +16,20 @@ output "github-ruby-workflow-env" {
   value = {
     "AWS_REGION" : data.aws_region.current.name,
     "LAMBDA_FUNCTION_NAME" : module.lambda_rb_function.lambda_function_name,
-    "LAMBDA_SECRETS_LAYER" : local.lambda-layer-name
+    "LAMBDA_SECRETS_LAYER" : local.lambda-layer-name,
+    # "SECRETSMANAGER_PATH" : aws_secretsmanager_secret.app-secret.name,
+    "ASSUME_ROLE" : module.deployer_role.iam_role_name,
+  }
+}
+
+output "github-image-workflow-env" {
+
+  description = "The values to be set with Github Workflow"
+  value = {
+    "AWS_REGION" : data.aws_region.current.name,
+    "ECR_REPOSITORY" : local.ecr-name
+    "LAMBDA_CONTAINER_NAME" : module.lambda_container.lambda_function_name,
+    "LAMBDA_SECRETS_LAYER" : local.lambda-layer-name,
     # "SECRETSMANAGER_PATH" : aws_secretsmanager_secret.app-secret.name,
     "ASSUME_ROLE" : module.deployer_role.iam_role_name,
   }
