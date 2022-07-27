@@ -20,6 +20,33 @@ data "aws_iam_policy_document" "deployer-trust-policy" {
 
 # Lambda Deployer Role policy document
 data "aws_iam_policy_document" "deployer-policy" {
+
+    statement {
+      sid = "LoginToECR"
+      effect = "Allow"
+
+      actions = [
+        "ecr:GetAuthorizationToken",
+        "ecr:DescribeRepositories",
+      ]
+      resources = [
+        "*"
+      ]
+    }
+
+    statement {
+      sid = "ReadWriteECR"
+      effect = "Allow"
+      
+      actions = [
+        # Push/Pull to ECR
+        "ecr:*",
+      ]
+      resources = [
+        module.ecr.repository_arn
+      ]
+    }
+
     statement {
         sid = "DeployLambdaCode"
         effect = "Allow"
