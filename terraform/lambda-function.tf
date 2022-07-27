@@ -10,7 +10,7 @@ module "lambda_py_function" {
   source_path = "../py-function/"
 
   layers = [
-    "${local.lambda-layer-arn}:49"
+    "${local.lambda-layer-arn}:50"
   ]
 
   environment_variables = tomap({
@@ -40,7 +40,7 @@ module "lambda_rb_function" {
   ]
 
   environment_variables = tomap({
-    AWS_LAMBDA_EXEC_WRAPPER = "/opt/secrets-layer/secrets-layer.sh"
+    AWS_LAMBDA_EXEC_WRAPPER = "/opt/secrets-layer/lambda-secrets"
     SECRET_REGION = data.aws_region.current.name
   })
   
