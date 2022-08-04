@@ -1,21 +1,23 @@
-FROM public.ecr.aws/lambda/ruby:2.7
+FROM public.ecr.aws/lambda/python:3.9
 
 # Add the Lambda application to be run
-WORKDIR /app
-COPY lambda-application /app/lambda-application
+WORKDIR ${LAMBDA_TASK_ROOT}
 
-# == Setup 'lambda-secrets' ==
-# Add 'lambda-secrets' binary from Container Image
-# COPY --from=lambda-secrets:latest /app/lambda-secrets /app/lambda-secrets
-COPY lambda-secrets /app/lambda-secrets
-COPY secrets.yaml /app/secrets.yaml
+COPY app.py ${LAMBDA_TASK_ROOT}/app.py
+COPY secrets.yaml ${LAMBDA_TASK_ROOT}/secrets.yaml
+
+# Add an extension from the local directory into /opt
+COPY ./extensions/fetch-secrets /opt/extensions/fetch-secrets
+COPY extensions/wrapper/load-secrets /opt/extensions/wrapper/load-secrets
 
 # Pass the actual ENTRYPOINT to 'lambda-secrets':
 
 # Ensure 'lambda-secrets' runs BEFORE the Lambda application
-ENTRYPOINT ["/app/lambda-secrets"]
+# ENTRYPOINT ["/opt/extensions/wrapper/load-secrets"]
+
+ENV AWS_LAMBDA_EXEC_WRAPPER "/opt/extensions/wrapper/load-secrets"
 
 # - Cleaner and has priority:
-CMD ["/app/lambda-application"]
+CMD ["app.lambda_handler"]
 # - Supports Shell notation such as pipes, loops
 # ENV ENTRYPOINT "/app/lambda-application"
