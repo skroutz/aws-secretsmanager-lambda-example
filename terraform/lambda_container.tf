@@ -8,12 +8,12 @@ module "lambda_container" {
   package_type = "Image"
 
   # create_lambda_function_url = true
-  image_uri    = "533973265978.dkr.ecr.eu-central-1.amazonaws.com/secretsmanager-lambda-example-ecr:v0.0.10"
-  # image_config_entry_point =  ["/app/lambda-secrets"]
-  # image_config_working_directory = "/app"
-  # image_config_command = ["-f", "/app/secrets.yaml"]
-  # docker_build_root = "../lambda-container/"
-  # docker_file = "../lambda_container/Dockerfile"
+  image_uri    = "533973265978.dkr.ecr.eu-central-1.amazonaws.com/secretsmanager-lambda-example-ecr:v0.0.15"
+
+  environment_variables = tomap({
+    AWS_LAMBDA_EXEC_WRAPPER = "/opt/extensions/wrapper/load-secrets"
+    SECRET_REGION = data.aws_region.current.name
+  })
 
   lambda_role = module.lambda_role.iam_role_arn
   create_role = false
