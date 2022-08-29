@@ -8,7 +8,7 @@ module "lambda_container" {
   package_type = "Image"
 
   # create_lambda_function_url = true
-  image_uri    = "533973265978.dkr.ecr.eu-central-1.amazonaws.com/secretsmanager-lambda-example-ecr:v0.0.15"
+  image_uri    = "533973265978.dkr.ecr.eu-central-1.amazonaws.com/secretsmanager-lambda-example-container:latest"
 
   environment_variables = tomap({
     AWS_LAMBDA_EXEC_WRAPPER = "/opt/extensions/wrapper/load-secrets"

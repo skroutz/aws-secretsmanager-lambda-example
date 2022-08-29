@@ -5,12 +5,13 @@ module "lambda_py_function" {
   description     = "Example Python Lambda Function with Secrets Manager integration"
   handler         = "lambda_function.lambda_handler"
   runtime         = "python3.8"
-
+  architectures   = ["arm64"]
+  
   # create_lambda_function_url = true
   source_path = "../py-function/"
 
   layers = [
-    "arn:aws:lambda:eu-central-1:533973265978:layer:aws-lambda-secrets-extension:16"
+    "arn:aws:lambda:eu-central-1:533973265978:layer:aws-lambda-secrets-layer-arm64:2"
   ]
 
   environment_variables = tomap({
@@ -31,12 +32,13 @@ module "lambda_rb_function" {
   description     = "Example Ruby Lambda Function with Secrets Manager integration"
   handler         = "lambda_function.lambda_handler"
   runtime         = "ruby2.7"
+  architectures   = ["x86_64"]
 
   source_path = "../rb-function/"
   # create_lambda_function_url = true
 
   layers = [
-    "arn:aws:lambda:eu-central-1:533973265978:layer:aws-lambda-secrets-extension:16"
+    "arn:aws:lambda:eu-central-1:533973265978:layer:aws-lambda-secrets-layer-x86_64:2"
   ]
 
   environment_variables = tomap({

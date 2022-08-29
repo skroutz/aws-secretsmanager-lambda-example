@@ -50,5 +50,5 @@ jobs:
         env:
           release_id: ${{ format('aws-secretsmanager-lambda-example-{0}-function.zip', github.head_ref )}}
         run: |
-          aws lambda update-function-code --function-name "${LAMBDA_FUNCTION_NAME}" --zip-file fileb://build/$release_id
+          aws lambda update-function-code --function-name "${LAMBDA_FUNCTION_NAME}" --architectures x86_64 arm64 --zip-file fileb://build/$release_id
           rm -r ./build
