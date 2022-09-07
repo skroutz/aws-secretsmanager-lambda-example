@@ -14,10 +14,16 @@ This directory contains code for:
 
 * A basic Ruby Lambda Function that serves the value of an Environment Variable (`SECRET_VALUE`)
 
+## `lambda-container/`
+
+This directory contains code for:
+
+* An example Lambda Container Application that serves the value of an Environment Variable (`SECRET_VALUE`) and and example Dockerfile to showcase the use of Lambda Secrets Extension
+
 ---
 **Multiple lambda functions are deployed to showcase  Secrets Layer's compatibility with multiple Lambda Runtimes**
 
-## `secrets-layer/`
+## `secrets-layer/` (Deprecated)
 
 This directory contains code for:
 
