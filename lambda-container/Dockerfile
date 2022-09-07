@@ -7,8 +7,8 @@ COPY app.py ${LAMBDA_TASK_ROOT}/app.py
 COPY secrets.yaml ${LAMBDA_TASK_ROOT}/secrets.yaml
 
 # Add an extension from the local directory into /opt
-COPY --from=533973265978.dkr.ecr.eu-central-1.amazonaws.com/aws-lambda-secrets-extension:latest /extension/fetch-secrets /opt/extensions/fetch-secrets
-COPY --from=533973265978.dkr.ecr.eu-central-1.amazonaws.com/aws-lambda-secrets-extension:latest /extension/wrapper/load-secrets /opt/extensions/wrapper/load-secrets
+COPY --from=ghcr.io/skroutz/aws-lambda-secrets:v1.0.0 /extension/fetch-secrets /opt/extensions/fetch-secrets
+COPY --from=ghcr.io/skroutz/aws-lambda-secrets:v1.0.0 /extension/wrapper/load-secrets /opt/extensions/wrapper/load-secrets
 
 # Pass the actual ENTRYPOINT to 'lambda-secrets':
 
