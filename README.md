@@ -1,27 +1,27 @@
 # aws-secretsmanager-lambda-example
-An example application that showcases a Lambda Deployment with AWS SecretsManager integration based on Lambda Layers, through Github Workflows.
+An example repo to showcase different Lambda Deployments leveraging Skroutz's [aws-lambda-secrets](https://github.com/skroutz/aws-lambda-secrets) Extension Layer to integrate with AWS SecretsManager. Deployed via Terraform and Github Workflows.
 
 # Contents
 ## `py-function/`
 
 This directory contains code for:
 
-* A basic Python Lambda Function that serves the value of an Environment Variable (`SECRET_VALUE`)
+* A basic Python Lambda Function (`arm64`) that serves the value of an Environment Variable (`SECRET_VALUE`) to showcase the use of Lambda Secrets Extension
 
 ## `rb-function/`
 
 This directory contains code for:
 
-* A basic Ruby Lambda Function that serves the value of an Environment Variable (`SECRET_VALUE`)
+* A basic Ruby Lambda Function (`x86_64`) that serves the value of an Environment Variable (`SECRET_VALUE`) to showcase the use of Lambda Secrets Extension
 
 ## `lambda-container/`
 
 This directory contains code for:
 
-* An example Lambda Container Application that serves the value of an Environment Variable (`SECRET_VALUE`) and and example Dockerfile to showcase the use of Lambda Secrets Extension
+* An example Lambda Container Application that serves the value of an Environment Variable (`SECRET_VALUE`) and the Dockerfile to showcase the use of Lambda Secrets Extension
 
 ---
-**Multiple lambda functions are deployed to showcase  Secrets Layer's compatibility with multiple Lambda Runtimes**
+**Multiple lambda functions are deployed to demonstrate  Secrets Layer's compatibility with multiple Lambda Runtimes and Architectures**
 
 ## `secrets-layer/` (Deprecated)
 
@@ -34,12 +34,12 @@ This directory contains code for:
 
 This directory contains code for deploying:
 
-* An IAM User that can assume an IAM Role able to deploy the Lambda Layer and Function (used by Github Workflows)
-  * Least privilege access to resources like Lambda Functions and Layers
-* A SecretsManager secret to be used by the Lambda app
-* An IAM Role to be used by the Lambda Layer to pull the secret from AWS SecretsManager API
-* A Lambda Function running the app code
-* A Lambda Layer to abstract the process of exporting secrets from Amazon Secrets Manager to Environment Variables for consumption by the Lambda handler running the application code.
+* An IAM User that can assume an IAM Role able to deploy the Lambda Layer and Applications (used by Github Workflows Pipeline)
+* Secret Manager secret entries to be used by Lambdas
+* An ECR repository to publish the docker image used by Lambda Container app
+* An IAM Role to be used by Lambdas to pull the secret values from AWS SecretsManager API
+* Two Lambda Functions and a Lambda Container
+* (Deprecated) A Lambda Layer to abstract the process of exporting secrets from Amazon Secrets Manager to Environment Variables for consumption by the Lambda handler running the application code.
 
 # Usage
 
@@ -55,13 +55,18 @@ terraform apply -target module.user
 terraform apply
 ```
 
-The Terraform outputs contain IAM User Keys that need to be set in Github Secrets and AWS resource names to be set in Github Workflows `env:` for [Deploying the Lambda Function](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/deploy-lambda-function.yml#L11) and [Publishing the Secrets Layer](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/publish-secrets-layer.yml#L11). Both Workflows assume terraform has run succesfully.
+The Terraform outputs contain IAM User (Keys that need to be set in Github Secrets and AWS resource names to be set as EnvVars under Github Workflows `env:` paramete2.
+
+Workflows Pipeline assumes terraform has run succesfully.)
+, s run ruby
 
 # Workflows
 
-Commiting to main under `py-function/` path will trigger the [`Deploy to Lambda Function`](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/deploy-lambda-function.yml) Github Workflow, which creates a zip archive with the contents of `./py-function` and updates the deployed function's code using `lambda:UpdateFunctionCode` via AWS cli.
+Commiting to main under `/py-function` or `/rb-function` path will trigger the relevant `Deploy to Lambda Function` workflow ([python](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/deploy-python-lambda-function.yml), [ruby](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/deploy-ruby-lambda-function.yml)) which creates a zip archive containing the application code and updates the deployed function using AWS cli.
 
-Commiting to main under `secrets-layer/` path will trigger the [`Publish Lambda Secrets Layer`](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/publish-secrets-layer.yml) Github Workflow, which builds the Go binary for retrieving secrets via Secrets Manager's API and creates a zip archive with the contents of `./secrets-layer` along with the complied binary. The zip archive is published as a Lambda Layer Version using `lambda:PublishLayerVersion` via AWS cli.
+Commiting to main under `/lambda-container` path will trigger [Publish Lambda Image to Amazon ECR](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/publish-lambda-image.yml) workflow which builds and publishes the Lambda Container image to ECR.
+
+(Deprecated) Commiting to main under `secrets-layer/` path will trigger the [`Publish Lambda Secrets Layer`](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/publish-secrets-layer.yml) Github Workflow, which builds the Go wrapper binary for retrieving secrets via Secrets Manager's API, zips it into an archive  and publishes it as a Lambda Layer via AWS cli.
 
 # Other Resources:
 
