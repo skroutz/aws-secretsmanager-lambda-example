@@ -11,8 +11,6 @@ on:
 env:
   AWS_REGION: eu-central-1
   LAMBDA_FUNCTION_NAME: 'secretsmanager-lambda-example-py-lambda-function'
-  LAMBDA_SECRETS_LAYER: 'secretsmanager-lambda-example-secrets-layer'
-  SECRETSMANAGER_PATH: 'secretsmanager-lambda-example/secret1'
   ASSUME_ROLE: 'SkroutzSecretExampleLambdaDeployerRole'
 
 permissions:
@@ -46,7 +44,7 @@ jobs:
           zip -r ../build/$release_id ./*
           cd ..
 
-      - name: Publish Zip as Lambda Layer
+      - name:  Deploy Lambda Function
         env:
           release_id: ${{ format('aws-secretsmanager-lambda-example-{0}-function.zip', github.head_ref )}}
         run: |

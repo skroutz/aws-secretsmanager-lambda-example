@@ -23,13 +23,6 @@ This directory contains code for:
 ---
 **Multiple lambda functions are deployed to demonstrate  Secrets Layer's compatibility with multiple Lambda Runtimes and Architectures**
 
-## `secrets-layer/` (Deprecated)
-
-This directory contains code for:
-
-* A Go script for retrieving a secret value from Amazon Secrets Manager API
-* A Bash wrapper script, as an entrypoint executing the Go script, exporting the secret value in an Environment Variable and forwarding execution to the Lambda handler.
-
 ## `terraform/`
 
 This directory contains code for deploying:
@@ -65,8 +58,6 @@ Workflows Pipeline assumes terraform has run succesfully.)
 Commiting to main under `/py-function` or `/rb-function` path will trigger the relevant `Deploy to Lambda Function` workflow ([python](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/deploy-python-lambda-function.yml), [ruby](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/deploy-ruby-lambda-function.yml)) which creates a zip archive containing the application code and updates the deployed function using AWS cli.
 
 Commiting to main under `/lambda-container` path will trigger [Publish Lambda Image to Amazon ECR](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/publish-lambda-image.yml) workflow which builds and publishes the Lambda Container image to ECR.
-
-(Deprecated) Commiting to main under `secrets-layer/` path will trigger the [`Publish Lambda Secrets Layer`](https://github.com/skroutz/aws-secretsmanager-lambda-example/blob/main/.github/workflows/publish-secrets-layer.yml) Github Workflow, which builds the Go wrapper binary for retrieving secrets via Secrets Manager's API, zips it into an archive  and publishes it as a Lambda Layer via AWS cli.
 
 # Other Resources:
 

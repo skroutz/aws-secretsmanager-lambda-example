@@ -63,18 +63,6 @@ data "aws_iam_policy_document" "deployer-policy" {
         ]
     }
 
-    statement {
-      sid = "PublishLambdaLayerVersion"
-      effect = "Allow"
-
-      actions = [
-        "lambda:PublishLayerVersion"
-      ]
-
-      resources = [
-        "arn:aws:lambda:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:layer:${local.lambda-layer-name}"
-      ]
-    }
 }
 
 module "deployer_policy" {

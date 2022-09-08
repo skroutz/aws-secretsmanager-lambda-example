@@ -14,8 +14,6 @@ locals {
   py-lambda-function-name = "${local.project-name}-py-lambda-function"
   rb-lambda-function-name = "${local.project-name}-rb-lambda-function"
   lambda-container-name = "${local.project-name}-lambda-container"
-  lambda-layer-name = "${local.project-name}-secrets-layer"
-  lambda-layer-arn = "arn:aws:lambda:eu-central-1:533973265978:layer:secretsmanager-lambda-example-secrets-layer"
   ecr-name = "${local.project-name}-container"
   secret-path = local.project-name
 
