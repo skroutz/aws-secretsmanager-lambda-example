@@ -1,0 +1,63 @@
+name: Publish Custom Lambda Image to Amazon ECR
+
+on:
+  push:
+    branches:
+      - "main"
+      - "develop/*"
+    paths:
+      - 'lambda-custom-container/**'
+
+  workflow_dispatch:
+
+env:
+  AWS_REGION: eu-central-1                 # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: secretsmanager-lambda-example-custom-container           # set this to your Amazon ECR repository name
+  ASSUME_ROLE: 'SkroutzSecretExampleLambdaDeployerRole'
+
+permissions:
+  contents: read
+  packages: read
+
+
+jobs:
+  publish-lambda-custom-container:
+    name: Publish Lambda Container Image
+    runs-on: ubuntu-latest
+    environment: production
+      
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+        role-to-assume: ${{ env.ASSUME_ROLE }}
+        role-duration-seconds: 900
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: |
+          ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}
+
+    - name: Build and Push Image
+      id: build-and-push
+      uses: docker/build-push-action@v2
+      with:
+        context: ./lambda-custom-container
+        file: ./lambda-custom-container/Dockerfile
+        push: true
+        tags: |
+          ${{ steps.meta.outputs.tags }}
+          ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest
+        labels: ${{ steps.meta.outputs.labels }}
